@@ -12,7 +12,9 @@ tags: [frontend, components]
 
 ## How it works
 
-`SilkRibbons` renders a fixed full-viewport `<canvas>` (`zIndex 0`, blurred, pointer-events none) and animates five ribbon bands with `requestAnimationFrame`. Each ribbon has its own amplitude, wavelength, speed, and phase, drawn as a filled sine-wave band with a `lighter` composite and a low-opacity gradient sampled from `theme.app.colors` (primary/secondary/info) — so it adapts to every preset ([[Theme Factory]], [[Theme Context]]).
+`SilkRibbons` renders a fixed full-viewport `<canvas>` (`zIndex 0`, blurred, pointer-events none) and animates **seven** ribbon bands with `requestAnimationFrame`. Each ribbon has its own amplitude, wavelength, speed, and phase, drawn as a filled sine-wave band with a `lighter` composite and a theme-accent gradient sampled from `theme.app.colors` (primary/secondary/info). Each band also **drifts slowly up and down** so the silk feels alive — and it re-tints with every preset ([[Theme Factory]], [[Theme Context]]). The tunables (count, mid-stop alpha, blur, amplitude, drift) are named constants at the top of the file.
+
+The canvas sits over a separate layered backdrop — a diagonal `body` gradient + two soft accent glows painted in [[Component Overrides]] (`MuiCssBaseline`) — so the background reads rich and deep but still dark.
 
 An `intensity` prop scales gradient alpha and canvas opacity; [[App Shell]] passes `0.12` on image-heavy screens. When [[usePrefersReducedMotion]] returns true the animation loop never requests another frame — it draws one frozen still ([[Reduced-Motion Gating Pattern]]).
 

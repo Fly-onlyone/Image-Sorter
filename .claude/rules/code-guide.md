@@ -69,6 +69,16 @@ hex** in components; derive from the active palette so all 11 themes work.
 `Settings` (pydantic-settings, env prefix `IMGSORT_`) provides defaults; persisted user
 overrides come from the SQLite `settings` table. Read config via `get_settings()` (lru-cached).
 
+### Shared page primitives (`components/`)
+Screens compose from shared primitives, not bespoke layout. `PageContainer` + `PageHeader`
+(`PageContainer.tsx`) own page width — a **fluid** `maxWidth` that grows on wide windows (with
+`fill` for vertical stretch); **never hardcode a per-page `maxWidth` box**. `PageTransition`
+(`PageTransition.tsx`) animates view changes (mounted by `AppShell`). `StatTile` (`StatTile.tsx`)
+is the animated count-up tile. `Toast` + `useToast()` (`Toast.tsx`, `hooks/useToast.ts`) is the
+one themed snackbar — don't add ad-hoc `Snackbar`s. Reuse the `effects/` motion wrappers
+(`MagneticButton`, `ScrollReveal`, `AnimatedGradientBorder`); all motion gates on
+`usePrefersReducedMotion`.
+
 ### When NOT to add abstraction
 No DI containers, no ORM, no Redux. This is a single-user localhost app — direct functions +
 SQLite + React context are the intended altitude. Match it; don't introduce frameworks.

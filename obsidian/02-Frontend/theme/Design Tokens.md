@@ -14,7 +14,7 @@ tags: [frontend, theme]
 
 `DEFAULT_GLASS` sets `borderRadius` plus card/sidebar blur and opacity; `cardOpacity` is kept toward opaque (0.6) so thumbnails behind glass stay readable. `DEFAULT_SPRING` defines `snappy`/`bouncy`/`gentle` framer-motion spring configs (stiffness + damping). `DEFAULT_ANIM` defines `fast`/`normal`/`slow` durations and two named easings (`easeOutExpo`, `easeInOutBack`).
 
-All 11 presets share these instances via [[Theme Presets]]'s `preset()` helper, so themes diverge only in `colors` and the derived `gradientAccent`. The tokens surface on `theme.app` through [[Theme Factory]].
+All 11 presets share these instances via [[Theme Presets]]'s `preset()` helper, so themes diverge mostly in `colors` and the derived `gradientAccent`. The helper also accepts an optional `glass` override merged onto `DEFAULT_GLASS` — the default **Dracula** passes a glossier one (`cardOpacity 0.58`, `cardBlur 20`, `borderRadius 14`); the other ten keep the shared defaults. The tokens surface on `theme.app` through [[Theme Factory]].
 
 ## Depends on
 

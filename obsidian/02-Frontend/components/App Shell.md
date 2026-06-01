@@ -16,6 +16,8 @@ tags: [frontend, components]
 
 It mounts [[Silk Ribbons]] behind everything at `zIndex: 0`. The `RIBBON_INTENSITY` map dials the background down to `0.12` on image-heavy screens (Review, Gallery) so it never fights thumbnails — chrome carries the glass + glow while the thumbnail grid stays flat neutral.
 
+The main content area is a **flex column**; the routed screen is wrapped in `<AnimatePresence mode="wait">` + [[Page Transition]] keyed on `view`, giving a cross-fade/slide between views. The [[Silk Ribbons]] canvas stays a *sibling* of the transition (never a child) so it isn't remounted — its `requestAnimationFrame` loop keeps running across navigations. Each screen lays itself out with the shared [[Page Container]] (fluid responsive width + optional vertical `fill`) and `PageHeader`, so no screen hardcodes a `maxWidth`.
+
 ## Depends on
 
 - [[App State Context]] — `view`, `setView`, `run`

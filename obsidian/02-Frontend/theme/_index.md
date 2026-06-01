@@ -11,7 +11,7 @@ tags: [moc, frontend]
 
 ## Presets & context
 
-- [[Theme Presets]] — 11 presets, default Tokyo Night (`presets.ts`)
+- [[Theme Presets]] — 11 presets, default Dracula (`presets.ts`)
 - [[Theme Context]] — `AppThemeProvider` + `useThemeController()`, persisted (`ThemeContext.tsx`)
 - [[Theme Types]] — `ColorRoles`, `GlassTokens`, `SpringTokens`, `ThemePreset` (`types.ts`)
 

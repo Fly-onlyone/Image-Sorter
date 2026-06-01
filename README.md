@@ -4,9 +4,6 @@ A Windows desktop app that sorts a folder of anime/gacha images by **subject**
 (character and/or artist), keeps the highest-resolution copy of duplicates, gates
 out non-anime images, and splits R-18 art into a `nude/` leaf — all offline.
 
-> Stack and conventions mirror the author's `ZZZ_Bot_Python` (Tauri + FastAPI sidecar
-> plumbing) and `TradingAgent` (TypeScript theme system) repos.
-
 📚 Documentation lives in [`obsidian/`](obsidian/_HOME.md) — open as an Obsidian vault or
 browse the markdown directly.
 
@@ -70,7 +67,7 @@ everything runs offline (`HF_HUB_OFFLINE=1`).
 | `backend/app/` | FastAPI sidecar — `server.py`, `db.py`, `engine/*` |
 | `frontend/src/pages/` | the 7 app screens (Setup → Progress → Review → Commit, Gallery, History, Settings) |
 | `frontend/src/api/`, `store/`, `hooks/`, `utils/` | client, app state, hooks, platform helpers |
-| `frontend/src/theme/` | typed 11-theme registry (default Tokyo Night) |
+| `frontend/src/theme/` | typed 11-theme registry (default Dracula) |
 | `frontend/src/components/effects/` | `SilkRibbons` (signature background) + ported polish helpers |
 | `frontend/src-tauri/` | Rust shell — sidecar lifecycle + port handshake |
 | `product/sidecar.spec` | PyInstaller packaging for the sidecar |

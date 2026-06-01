@@ -100,12 +100,19 @@ vars); user changes are persisted in the SQLite `settings` table and applied on 
 `PATCH /settings`. App data (DB, thumbnail cache, model cache) lives under
 `%LOCALAPPDATA%/ImageSorter`.
 
-**Theme system (`frontend/src/theme/`):** 11 typed `ThemePreset`s in `presets.ts` (default Tokyo
-Night) → `buildTheme()` produces an MUI theme plus a `theme.app` token bag (glass/shadows/spring/
-animations) that components and framer-motion read. App states map onto MUI palette slots —
-nude=`error`, review=`warning`, identified=`success` — so every theme "just works". Glass + glow
-apply to chrome only; the thumbnail grid stays flat neutral. `SilkRibbons` is the signature
-animated background and is dialled down on image-heavy screens.
+**Theme system (`frontend/src/theme/`):** 11 typed `ThemePreset`s in `presets.ts` (default
+Dracula; a preset may pass a `glass` override — Dracula uses a glossier one) → `buildTheme()`
+produces an MUI theme plus a `theme.app` token bag (glass/shadows/spring/animations) that
+components and framer-motion read. App states map onto MUI palette slots — nude=`error`,
+review=`warning`, identified=`success` — so every theme "just works". Glass + glow apply to
+chrome only; the thumbnail grid stays flat neutral. `SilkRibbons` (signature animated background,
+dialled down on image-heavy screens) layers over a theme-derived `body` gradient + accent glow.
+
+**Shared frontend primitives (`frontend/src/components/`):** `PageContainer`/`PageHeader` give
+every screen a fluid responsive width + cinematic gradient header — **never hardcode a per-page
+`maxWidth`**; `PageTransition` animates view changes; `StatTile` is the animated count-up tile;
+`Toast` + `useToast()` is the themed app-wide snackbar. All motion gates on
+`usePrefersReducedMotion`.
 
 ## Gotchas
 
@@ -124,7 +131,3 @@ Default branch is `dev` (PRs target `dev`; release-please runs there). Conventio
 enforced by pre-commit (`pre-commit install --hook-type commit-msg`). Python = Ruff, frontend =
 Biome. `release-please` ("simple") fans the version into `pyproject.toml`,
 `frontend/src-tauri/tauri.conf.json`, and `frontend/src-tauri/Cargo.toml`.
-
----
-**Last Synced**: 2026-05-31 (repository not yet committed — no sync commit). Update this line to
-`` `<short-hash>` `` after the first commit and re-sync after structural changes.
