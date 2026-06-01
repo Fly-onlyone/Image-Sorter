@@ -1,0 +1,64 @@
+[project]
+name = "image-sorter"
+version = "0.1.0"
+description = "Image Sorter — anime/gacha character categoriser (FastAPI sidecar + engine)"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pillow>=10.4",
+    "imagehash>=4.3.1",
+    "numpy>=1.26",
+    "send2trash>=1.8.3",
+    "sentry-sdk[fastapi]>=2.18",
+]
+
+[project.optional-dependencies]
+# Heavy, ONNX/offline ML stack. Kept optional so the sidecar boots for dev without
+# downloading hundreds of MB of weights; the engine lazy-loads these and degrades to
+# a heuristic fallback when absent (see backend/app/engine/models.py).
+ml = [
+    "dghs-imgutils>=0.19.0",
+    "onnxruntime>=1.19",
+]
+# Swap onnxruntime for onnxruntime-gpu via `uv sync --extra ml-gpu` on CUDA machines.
+ml-gpu = [
+    "dghs-imgutils>=0.19.0",
+    "onnxruntime-gpu>=1.19",
+]
+# PyInstaller for packaging the sidecar.
+build = [
+    "pyinstaller>=6.10",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+    "pytest>=8.3",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+image-sorter-sidecar = "app.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["frontend", "product/dist", "product/build-sidecar"]
+
+[tool.ruff.lint]
+extend-select = ["I"] # isort
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["tests"]

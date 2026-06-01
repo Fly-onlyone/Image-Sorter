@@ -1,0 +1,26 @@
+# Pre-commit hooks: Biome (frontend) + Ruff (backend) +
+# conventional commits. Install with: pre-commit install --hook-type commit-msg
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.4.16
+    hooks:
+      - id: biome-check
+        additional_dependencies: ["@biomejs/biome@2.4.16"]
+        files: ^frontend/.*\.(ts|tsx|json)$
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]

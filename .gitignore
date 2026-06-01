@@ -1,0 +1,43 @@
+# ── Python / backend ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+# PyInstaller output (product/)
+product/dist/
+product/build-sidecar/
+*.spec.bak
+
+# ── Node / frontend ───────────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+
+# ── Rust / Tauri ──────────────────────────────────────────────────
+target/
+frontend/src-tauri/target/
+frontend/src-tauri/binaries/*
+!frontend/src-tauri/binaries/.gitkeep
+frontend/src-tauri/gen/
+
+# ── App data (never commit weights / caches / DB) ────────────────
+*.onnx
+models/
+*.sqlite
+*.sqlite-*
+*.db
+.image-sorter/
+thumbs-cache/
+
+# ── Editor / OS ───────────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ── Obsidian per-user state (vault content + shared config IS tracked) ──
+obsidian/.obsidian/workspace.json
+obsidian/.obsidian/workspace-mobile.json
+obsidian/.obsidian/workspaces.json
