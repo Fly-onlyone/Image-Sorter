@@ -25,6 +25,8 @@ import { useState } from "react";
 import type { Facet } from "../api/client";
 import { api } from "../api/client";
 import { MagneticButton } from "../components/effects/MagneticButton";
+import { ScrollReveal } from "../components/effects/ScrollReveal";
+import { PageContainer, PageHeader } from "../components/PageContainer";
 import { useAppState } from "../store/AppState";
 import { pickDirectory } from "../utils/platform";
 
@@ -57,6 +59,7 @@ function FolderField({
             <InputAdornment position="end">
               <IconButton
                 edge="end"
+                aria-label={`Browse ${label}`}
                 onClick={async () => {
                   const picked = await pickDirectory(label);
                   if (picked) onChange(picked);
@@ -126,10 +129,11 @@ export function SetupScreen() {
   }
 
   return (
-    <Box sx={{ maxWidth: 920 }}>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        New Run
-      </Typography>
+    <PageContainer>
+      <PageHeader
+        title="New Run"
+        subtitle="Choose a folder, tune the pipeline, then start sorting"
+      />
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -137,154 +141,171 @@ export function SetupScreen() {
       )}
 
       <Grid container spacing={2}>
-        <Grid size={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
-                Layout
-              </Typography>
-              <ToggleButtonGroup
-                exclusive
-                value={layoutId}
-                onChange={(_, v) => v && setLayoutId(v)}
-                size="small"
-              >
-                {LAYOUTS.map((l) => (
-                  <ToggleButton key={l.id} value={l.id}>
-                    {l.label}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
-                Source &amp; Output
-              </Typography>
-              <Stack spacing={2}>
-                <FolderField label="Input folder" value={inputDir} onChange={setInputDir} />
-                <FolderField
-                  label="Output folder (blank = in-place)"
-                  value={outputDir}
-                  onChange={setOutputDir}
-                />
-                <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={recursive}
-                        onChange={(e) => setRecursive(e.target.checked)}
-                      />
-                    }
-                    label="Scan subfolders"
-                  />
-                  <Chip
-                    size="small"
-                    label={inPlace ? "In-place — files will MOVE" : "Copy to output"}
-                    color={inPlace ? "warning" : "default"}
-                  />
-                </Stack>
-                {inPlace && (
-                  <Alert severity="warning">
-                    Output equals input: images are reorganised in place (moved, not copied).
-                    Re-runs stay idempotent — reserved folders are skipped.
-                  </Alert>
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
-                Cleanup — Deduplication
-              </Typography>
-              <FormControlLabel
-                control={<Switch checked={dedup} onChange={(e) => setDedup(e.target.checked)} />}
-                label="Keep the highest-resolution copy"
-              />
-              <Box sx={{ px: 1, mt: 1, opacity: dedup ? 1 : 0.5 }}>
-                <Typography variant="caption" color="text.secondary">
-                  Match distance: {dupDistance}
-                </Typography>
-                <Slider
-                  disabled={!dedup}
-                  value={dupDistance}
-                  min={0}
-                  max={12}
-                  step={1}
-                  marks
-                  onChange={(_, v) => setDupDistance(v as number)}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
-                Nude policy
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Switch checked={strictNude} onChange={(e) => setStrictNude(e.target.checked)} />
-                }
-                label="Strict (escalate via censor detection)"
-              />
-              <Box sx={{ px: 1, mt: 1 }}>
-                <Typography variant="caption" color="text.secondary">
-                  Explicit threshold: {explicitThreshold.toFixed(2)}
-                </Typography>
-                <Slider
-                  value={explicitThreshold}
-                  min={0.2}
-                  max={0.9}
-                  step={0.05}
-                  onChange={(_, v) => setExplicitThreshold(v as number)}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: hasArtist ? 6 : 12 }}>
-          <Card>
-            <CardContent>
-              <Typography variant="subtitle1" gutterBottom>
-                Engine
-              </Typography>
-              <FormControlLabel
-                control={<Switch checked={useGpu} onChange={(e) => setUseGpu(e.target.checked)} />}
-                label="Use GPU (onnxruntime-gpu)"
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {hasArtist && (
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <ScrollReveal>
+            <Card sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="subtitle1" gutterBottom>
-                  Artist (reverse lookup)
+                  Layout
                 </Typography>
-                <TextField
-                  fullWidth
+                <ToggleButtonGroup
+                  exclusive
+                  value={layoutId}
+                  onChange={(_, v) => v && setLayoutId(v)}
                   size="small"
-                  label="SauceNAO API key (optional)"
-                  value={saucenaoKey}
-                  onChange={(e) => setSaucenaoKey(e.target.value)}
+                >
+                  {LAYOUTS.map((l) => (
+                    <ToggleButton key={l.id} value={l.id}>
+                      {l.label}
+                    </ToggleButton>
+                  ))}
+                </ToggleButtonGroup>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 8 }}>
+          <ScrollReveal delay={0.05}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  Source &amp; Output
+                </Typography>
+                <Stack spacing={2}>
+                  <FolderField label="Input folder" value={inputDir} onChange={setInputDir} />
+                  <FolderField
+                    label="Output folder (blank = in-place)"
+                    value={outputDir}
+                    onChange={setOutputDir}
+                  />
+                  <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={recursive}
+                          onChange={(e) => setRecursive(e.target.checked)}
+                        />
+                      }
+                      label="Scan subfolders"
+                    />
+                    <Chip
+                      size="small"
+                      label={inPlace ? "In-place — files will MOVE" : "Copy to output"}
+                      color={inPlace ? "warning" : "default"}
+                    />
+                  </Stack>
+                  {inPlace && (
+                    <Alert severity="warning">
+                      Output equals input: images are reorganised in place (moved, not copied).
+                      Re-runs stay idempotent — reserved folders are skipped.
+                    </Alert>
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ScrollReveal delay={0.1}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  Cleanup — Deduplication
+                </Typography>
+                <FormControlLabel
+                  control={<Switch checked={dedup} onChange={(e) => setDedup(e.target.checked)} />}
+                  label="Keep the highest-resolution copy"
+                />
+                <Box sx={{ px: 1, mt: 1, opacity: dedup ? 1 : 0.5 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Match distance: {dupDistance}
+                  </Typography>
+                  <Slider
+                    disabled={!dedup}
+                    value={dupDistance}
+                    min={0}
+                    max={12}
+                    step={1}
+                    marks
+                    onChange={(_, v) => setDupDistance(v as number)}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ScrollReveal delay={0.15}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  Nude policy
+                </Typography>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={strictNude}
+                      onChange={(e) => setStrictNude(e.target.checked)}
+                    />
+                  }
+                  label="Strict (escalate via censor detection)"
+                />
+                <Box sx={{ px: 1, mt: 1 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Explicit threshold: {explicitThreshold.toFixed(2)}
+                  </Typography>
+                  <Slider
+                    value={explicitThreshold}
+                    min={0.2}
+                    max={0.9}
+                    step={0.05}
+                    onChange={(_, v) => setExplicitThreshold(v as number)}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <ScrollReveal delay={0.2}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  Engine
+                </Typography>
+                <FormControlLabel
+                  control={
+                    <Switch checked={useGpu} onChange={(e) => setUseGpu(e.target.checked)} />
+                  }
+                  label="Use GPU (onnxruntime-gpu)"
                 />
               </CardContent>
             </Card>
+          </ScrollReveal>
+        </Grid>
+
+        {hasArtist && (
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+            <ScrollReveal delay={0.25}>
+              <Card sx={{ height: "100%" }}>
+                <CardContent>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Artist (reverse lookup)
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="SauceNAO API key (optional)"
+                    value={saucenaoKey}
+                    onChange={(e) => setSaucenaoKey(e.target.value)}
+                  />
+                </CardContent>
+              </Card>
+            </ScrollReveal>
           </Grid>
         )}
       </Grid>
@@ -300,6 +321,6 @@ export function SetupScreen() {
           {busy ? "Scanning…" : "Start run"}
         </MagneticButton>
       </Box>
-    </Box>
+    </PageContainer>
   );
 }

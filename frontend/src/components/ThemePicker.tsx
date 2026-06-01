@@ -32,7 +32,11 @@ export function ThemePicker() {
   return (
     <>
       <Tooltip title="Theme">
-        <IconButton color="inherit" onClick={(e) => setAnchor(e.currentTarget)}>
+        <IconButton
+          color="inherit"
+          aria-label="Choose theme"
+          onClick={(e) => setAnchor(e.currentTarget)}
+        >
           <PaletteIcon />
         </IconButton>
       </Tooltip>

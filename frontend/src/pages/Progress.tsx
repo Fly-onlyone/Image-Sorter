@@ -5,8 +5,6 @@ import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
   Grid,
   LinearProgress,
   Step,
@@ -16,6 +14,11 @@ import {
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api/client";
+import { AnimatedGradientBorder } from "../components/effects/AnimatedGradientBorder";
+import { MagneticButton } from "../components/effects/MagneticButton";
+import { ScrollReveal } from "../components/effects/ScrollReveal";
+import { PageContainer, PageHeader } from "../components/PageContainer";
+import { StatTile } from "../components/StatTile";
 import { useAppState } from "../store/AppState";
 
 const PHASES = ["dedup", "gate", "tag", "identify", "cluster"] as const;
@@ -27,20 +30,13 @@ const PHASE_LABELS: Record<string, string> = {
   cluster: "Cluster",
 };
 
-function StatTile({ label, value }: { label: string; value: number | string }) {
-  return (
-    <Card>
-      <CardContent sx={{ textAlign: "center", py: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          {value}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {label}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-}
+// Spotlight the stat tile relevant to the running phase.
+const PHASE_STAT: Record<string, string> = {
+  dedup: "Deduped",
+  gate: "Anime",
+  tag: "Nude",
+  identify: "Identified",
+};
 
 export function ProgressScreen() {
   const { run, setView } = useAppState();
@@ -92,12 +88,20 @@ export function ProgressScreen() {
   const pct = phaseProgress?.total
     ? Math.round((phaseProgress.done / phaseProgress.total) * 100)
     : undefined;
+  const liveStat = done ? "" : (PHASE_STAT[phase] ?? "");
+
+  const tiles: [string, number][] = [
+    ["Deduped", stats.deduped ?? 0],
+    ["Anime", stats.anime ?? 0],
+    ["Other", stats.other ?? 0],
+    ["Identified", stats.identified ?? 0],
+    ["Residual", stats.residual ?? 0],
+    ["Nude", stats.nude ?? 0],
+  ];
 
   return (
-    <Box sx={{ maxWidth: 920 }}>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        Processing — {run.scanned} images
-      </Typography>
+    <PageContainer>
+      <PageHeader title="Processing" subtitle={`${run.scanned} images`} />
 
       <Stepper activeStep={done ? PHASES.length : activeStep} sx={{ mb: 3 }}>
         {PHASES.map((p) => (
@@ -107,8 +111,8 @@ export function ProgressScreen() {
         ))}
       </Stepper>
 
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
+      <AnimatedGradientBorder>
+        <Box sx={{ p: 2.5 }}>
           <Typography variant="subtitle1" gutterBottom>
             {done ? "Done" : `${PHASE_LABELS[phase] ?? phase}…`}
             {pct !== undefined && !done ? ` ${pct}%` : ""}
@@ -118,39 +122,35 @@ export function ProgressScreen() {
               pct !== undefined && !done ? "determinate" : done ? "determinate" : "indeterminate"
             }
             value={done ? 100 : (pct ?? 0)}
+            aria-label={`${done ? 100 : (pct ?? 0)}% complete`}
           />
-        </CardContent>
-      </Card>
+        </Box>
+      </AnimatedGradientBorder>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mt: 3 }}>
           {error}
         </Alert>
       )}
 
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {[
-          ["Deduped", stats.deduped ?? 0],
-          ["Anime", stats.anime ?? 0],
-          ["Other", stats.other ?? 0],
-          ["Identified", stats.identified ?? 0],
-          ["Residual", stats.residual ?? 0],
-          ["Nude", stats.nude ?? 0],
-        ].map(([label, value]) => (
-          <Grid size={{ xs: 6, sm: 4, md: 2 }} key={label as string}>
-            <StatTile label={label as string} value={value as number} />
+      <Grid container spacing={2} sx={{ mt: 3, mb: 3 }}>
+        {tiles.map(([label, value], i) => (
+          <Grid size={{ xs: 6, sm: 4, md: 2 }} key={label}>
+            <ScrollReveal delay={i * 0.05}>
+              <StatTile label={label} value={value} accent={label === liveStat} />
+            </ScrollReveal>
           </Grid>
         ))}
       </Grid>
 
       <Box sx={{ display: "flex", gap: 2 }}>
-        <Button variant="contained" disabled={!done} onClick={() => setView("review")}>
+        <MagneticButton variant="contained" disabled={!done} onClick={() => setView("review")}>
           Continue to Review
-        </Button>
+        </MagneticButton>
         <Button color="inherit" onClick={() => setView("setup")}>
           {done ? "New run" : "Cancel"}
         </Button>
       </Box>
-    </Box>
+    </PageContainer>
   );
 }

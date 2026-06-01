@@ -14,6 +14,12 @@ export function buildComponents(preset: ThemePreset, shadows: GlowShadows): Comp
   const cardBg = withAlpha(colors.surface, glass.cardOpacity);
   const sidebarBg = withAlpha(colors.surface, glass.sidebarOpacity);
 
+  // Layered backdrop (still dark): diagonal base + two soft accent glows. Theme-derived,
+  // so every preset re-tints. Kept low-alpha so the base never lightens.
+  const baseGrad = `linear-gradient(135deg, ${colors.bg} 0%, ${withAlpha(colors.surface, 0.9)} 55%, ${colors.bg} 100%)`;
+  const accentGlow = `radial-gradient(1200px 800px at 85% -10%, ${withAlpha(colors.primary, 0.1)} 0%, transparent 60%)`;
+  const accentGlow2 = `radial-gradient(900px 700px at -5% 110%, ${withAlpha(colors.secondary, 0.07)} 0%, transparent 60%)`;
+
   return {
     MuiCssBaseline: {
       styleOverrides: {
@@ -24,6 +30,9 @@ export function buildComponents(preset: ThemePreset, shadows: GlowShadows): Comp
         },
         body: {
           backgroundColor: colors.bg,
+          backgroundImage: `${accentGlow}, ${accentGlow2}, ${baseGrad}`,
+          backgroundAttachment: "fixed",
+          minHeight: "100vh",
           color: colors.textPrimary,
           scrollbarColor: `${colors.border} transparent`,
         },
@@ -31,6 +40,16 @@ export function buildComponents(preset: ThemePreset, shadows: GlowShadows): Comp
         "*::-webkit-scrollbar-thumb": {
           background: colors.border,
           borderRadius: 8,
+        },
+        // Honour the OS reduced-motion flag for CSS-driven motion (the gradientFlow
+        // keyframes + card hover-lift). framer-motion is gated separately in JS.
+        "@media (prefers-reduced-motion: reduce)": {
+          "*, *::before, *::after": {
+            animationDuration: "0.001ms !important",
+            animationIterationCount: "1 !important",
+            transitionDuration: "0.001ms !important",
+            scrollBehavior: "auto !important",
+          },
         },
       },
     },
@@ -79,7 +98,7 @@ export function buildComponents(preset: ThemePreset, shadows: GlowShadows): Comp
             animation: "gradientFlow 6s ease infinite",
             opacity: 0.8,
           },
-          "&:hover": { boxShadow: shadows.cardHover },
+          "&:hover": { boxShadow: shadows.cardHover, transform: "translateY(-3px)" },
         },
       },
     },

@@ -1,4 +1,5 @@
 import { AppShell } from "./components/AppShell";
+import { ToastProvider } from "./components/Toast";
 import { CommitScreen } from "./pages/Commit";
 import { GalleryScreen } from "./pages/Gallery";
 import { HistoryScreen } from "./pages/History";
@@ -32,11 +33,13 @@ function Router() {
 export function App() {
   return (
     <AppThemeProvider>
-      <AppStateProvider>
-        <AppShell>
-          <Router />
-        </AppShell>
-      </AppStateProvider>
+      <ToastProvider>
+        <AppStateProvider>
+          <AppShell>
+            <Router />
+          </AppShell>
+        </AppStateProvider>
+      </ToastProvider>
     </AppThemeProvider>
   );
 }

@@ -1,9 +1,10 @@
 // History / Runs: a DataGrid of past runs from the manifest.
 
-import { Alert, Box, Chip, Typography } from "@mui/material";
+import { Alert, Box, Chip } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
+import { PageContainer, PageHeader } from "../components/PageContainer";
 
 const columns: GridColDef[] = [
   { field: "run_id", headerName: "Run", width: 120 },
@@ -36,20 +37,23 @@ export function HistoryScreen() {
   }, []);
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        History
-      </Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      <Box sx={{ height: 540 }}>
+    <PageContainer maxWidth="fluid" fill>
+      <PageHeader title="History" subtitle="Past runs from the manifest" />
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      <Box sx={{ flexGrow: 1, minHeight: 360, display: "flex" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           getRowId={(r) => r.run_id as string}
           density="compact"
           disableRowSelectionOnClick
+          sx={{ flex: 1 }}
         />
       </Box>
-    </Box>
+    </PageContainer>
   );
 }

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+/** Custom event the Settings toggle fires so every hook instance re-reads the
+ *  override live (localStorage writes don't notify the same tab on their own). */
+export const REDUCED_MOTION_EVENT = "image-sorter:reduced-motion";
+
 /** Reduced-motion gate wired on every animation (an improvement
  *  over TradingAgent, which didn't gate). Also honours a user Settings override. */
 export function usePrefersReducedMotion(): boolean {
@@ -16,7 +20,13 @@ export function usePrefersReducedMotion(): boolean {
       setReduced(override || mq.matches);
     };
     mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    window.addEventListener("storage", handler); // cross-tab
+    window.addEventListener(REDUCED_MOTION_EVENT, handler); // same-tab (Settings toggle)
+    return () => {
+      mq.removeEventListener("change", handler);
+      window.removeEventListener("storage", handler);
+      window.removeEventListener(REDUCED_MOTION_EVENT, handler);
+    };
   }, []);
 
   return reduced;

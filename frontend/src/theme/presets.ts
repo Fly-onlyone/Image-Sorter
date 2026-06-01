@@ -1,19 +1,27 @@
 // 11-theme registry. Palettes verified from each theme's official
 // spec. Studio (gallery-safe neutral/teal) + the 10 most popular software themes.
-// Default on first launch = Tokyo Night.
+// Default on first launch = Dracula (vivid warm purple/pink).
 
 import { DEFAULT_ANIM, DEFAULT_GLASS, DEFAULT_SPRING } from "./tokens";
-import type { ColorRoles, ThemePreset } from "./types";
+import type { ColorRoles, GlassTokens, ThemePreset } from "./types";
 
-export const DEFAULT_THEME_ID = "tokyo-night";
+export const DEFAULT_THEME_ID = "dracula";
 
-function preset(id: string, name: string, hue: string, colors: ColorRoles): ThemePreset {
+// Themes share DEFAULT_GLASS; a preset may pass a small glass override (e.g. the
+// glossier default) without affecting the other ten.
+function preset(
+  id: string,
+  name: string,
+  hue: string,
+  colors: ColorRoles,
+  glassOverride?: Partial<GlassTokens>,
+): ThemePreset {
   return {
     id,
     name,
     hue,
     colors,
-    glass: DEFAULT_GLASS,
+    glass: glassOverride ? { ...DEFAULT_GLASS, ...glassOverride } : DEFAULT_GLASS,
     spring: DEFAULT_SPRING,
     animations: DEFAULT_ANIM,
   };
@@ -48,20 +56,27 @@ export const PRESETS: ThemePreset[] = [
     error: "#f7768e",
     info: "#7dcfff",
   }),
-  preset("dracula", "Dracula", "warm vibrant", {
-    bg: "#282a36",
-    surface: "#343746",
-    elevated: "#44475a",
-    border: "#44475a",
-    textPrimary: "#f8f8f2",
-    textSecondary: "#6272a4",
-    primary: "#bd93f9",
-    secondary: "#ff79c6",
-    success: "#50fa7b",
-    warning: "#f1fa8c",
-    error: "#ff5555",
-    info: "#8be9fd",
-  }),
+  preset(
+    "dracula",
+    "Dracula",
+    "warm vibrant",
+    {
+      bg: "#282a36",
+      surface: "#343746",
+      elevated: "#44475a",
+      border: "#44475a",
+      textPrimary: "#f8f8f2",
+      textSecondary: "#6272a4",
+      primary: "#bd93f9",
+      secondary: "#ff79c6",
+      success: "#50fa7b",
+      warning: "#f1fa8c",
+      error: "#ff5555",
+      info: "#8be9fd",
+    },
+    // Glossier glass for the default theme (others keep DEFAULT_GLASS).
+    { cardOpacity: 0.58, cardBlur: 20, borderRadius: 14 },
+  ),
   preset("nord", "Nord", "cool arctic muted", {
     bg: "#2e3440",
     surface: "#3b4252",

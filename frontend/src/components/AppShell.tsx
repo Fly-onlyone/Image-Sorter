@@ -23,9 +23,11 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { AnimatePresence } from "framer-motion";
 import type { ReactNode } from "react";
 import { useAppState, type View } from "../store/AppState";
 import { SilkRibbons } from "./effects/SilkRibbons";
+import { PageTransition } from "./PageTransition";
 import { ThemePicker } from "./ThemePicker";
 
 const DRAWER_WIDTH = 232;
@@ -96,10 +98,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, position: "relative", zIndex: 1, p: 3 }}>
-        <Toolbar />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          position: "relative",
+          zIndex: 1,
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Toolbar sx={{ flexShrink: 0 }} />
         {flowIndex >= 0 && (
-          <Stepper activeStep={flowIndex} sx={{ mb: 3, maxWidth: 720 }}>
+          <Stepper activeStep={flowIndex} sx={{ mb: 3, maxWidth: 720, flexShrink: 0 }}>
             {FLOW_LABELS.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -107,7 +120,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </Stepper>
         )}
-        {children}
+        <AnimatePresence mode="wait">
+          <PageTransition key={view}>{children}</PageTransition>
+        </AnimatePresence>
       </Box>
     </Box>
   );
