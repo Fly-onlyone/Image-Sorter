@@ -23,6 +23,16 @@ updates:
     groups:
       rust:
         patterns: ["*"]
+    # GTK / glib / gdk / webkit2gtk are the Linux-only GUI bindings pulled in transitively by
+    # Tauri's tao + wry. This app ships on Windows (WebView2), so they are never compiled in,
+    # and Tauri 2.x version-locks them to 0.18.x — Dependabot can't bump them independently
+    # (the glib security update reports "security_update_not_possible"). They only move when
+    # Tauri itself updates, so ignore the family to stop the recurring impossible updates.
+    ignore:
+      - dependency-name: "glib*"
+      - dependency-name: "gtk*"
+      - dependency-name: "gdk*"
+      - dependency-name: "webkit2gtk*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
