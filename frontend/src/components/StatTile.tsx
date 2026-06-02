@@ -35,10 +35,16 @@ export function StatTile({
   accent?: boolean;
 }) {
   const theme = useTheme();
+  const reduced = usePrefersReducedMotion();
   return (
     <Card
       sx={{
         height: "100%",
+        // Ease the accent glow/border when the spotlighted phase changes (Progress) instead of
+        // snapping. Includes transform so the theme's hover-lift still animates.
+        transition: reduced
+          ? "none"
+          : "box-shadow .3s ease, border-color .3s ease, transform .25s ease",
         ...(accent && { borderColor: "primary.main", boxShadow: theme.app.shadows.primary }),
       }}
     >

@@ -14,10 +14,13 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../api/client";
-import { ScrollReveal } from "../components/effects/ScrollReveal";
-import { PageContainer, PageHeader } from "../components/PageContainer";
+import { Crossfade } from "../components/effects/Crossfade";
+import { FadeIn } from "../components/effects/FadeIn";
+import { PageBar, PageContainer } from "../components/PageContainer";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useToast } from "../hooks/useToast";
 
 interface Character {
@@ -36,6 +39,7 @@ const CARD_GRID = {
 
 export function GalleryScreen() {
   const { toast } = useToast();
+  const reduced = usePrefersReducedMotion();
   const [tab, setTab] = useState(0);
   const [characters, setCharacters] = useState<Character[]>([]);
 
@@ -62,23 +66,29 @@ export function GalleryScreen() {
     }
   }
 
-  return (
-    <PageContainer maxWidth="fluid">
-      <PageHeader title="Gallery" subtitle="Enrolled characters and artists" />
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
-        <Tab label="Characters" />
-        <Tab label="Artists" />
-      </Tabs>
-
-      {tab === 0 &&
-        (characters.length === 0 ? (
+  function renderPanel() {
+    if (tab === 0)
+      return characters.length === 0 ? (
+        <FadeIn>
           <Alert severity="info">
             No characters yet — name a cluster during Review or enroll from reference images.
           </Alert>
-        ) : (
-          <Box sx={{ display: "grid", gridTemplateColumns: CARD_GRID, gap: 2 }}>
+        </FadeIn>
+      ) : (
+        <Box sx={{ display: "grid", gridTemplateColumns: CARD_GRID, gap: 2 }}>
+          <AnimatePresence initial={false}>
             {characters.map((c, i) => (
-              <ScrollReveal key={c.id} delay={Math.min(i * 0.04, 0.3)}>
+              <motion.div
+                key={c.id}
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduced ? undefined : { opacity: 0, scale: 0.95 }}
+                transition={{
+                  duration: 0.3,
+                  delay: reduced ? 0 : Math.min(i * 0.04, 0.3),
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
                 <Card sx={{ height: "100%" }}>
                   <CardContent>
                     <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
@@ -108,16 +118,29 @@ export function GalleryScreen() {
                     </Stack>
                   </CardContent>
                 </Card>
-              </ScrollReveal>
+              </motion.div>
             ))}
-          </Box>
-        ))}
-
-      {tab === 1 && (
+          </AnimatePresence>
+        </Box>
+      );
+    return (
+      <FadeIn>
         <Alert severity="info">
           Artists are enrolled automatically from download metadata during artist-layout runs.
         </Alert>
-      )}
+      </FadeIn>
+    );
+  }
+
+  return (
+    <PageContainer maxWidth="fluid">
+      <PageBar title="Gallery" subtitle="Enrolled characters and artists" />
+      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
+        <Tab label="Characters" />
+        <Tab label="Artists" />
+      </Tabs>
+
+      <Crossfade id={tab}>{renderPanel()}</Crossfade>
     </PageContainer>
   );
 }

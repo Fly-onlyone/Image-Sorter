@@ -5,6 +5,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Grid,
   LinearProgress,
   Step,
@@ -15,9 +16,10 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api/client";
 import { AnimatedGradientBorder } from "../components/effects/AnimatedGradientBorder";
+import { FadeIn } from "../components/effects/FadeIn";
 import { MagneticButton } from "../components/effects/MagneticButton";
 import { ScrollReveal } from "../components/effects/ScrollReveal";
-import { PageContainer, PageHeader } from "../components/PageContainer";
+import { PageBar, PageContainer } from "../components/PageContainer";
 import { StatTile } from "../components/StatTile";
 import { useAppState } from "../store/AppState";
 
@@ -101,7 +103,17 @@ export function ProgressScreen() {
 
   return (
     <PageContainer>
-      <PageHeader title="Processing" subtitle={`${run.scanned} images`} />
+      <PageBar
+        title="Processing"
+        subtitle={
+          <Chip
+            size="small"
+            variant="outlined"
+            color="info"
+            label={`${run.scanned} imgs${pct !== undefined && !done ? ` · ${pct}%` : ""}`}
+          />
+        }
+      />
 
       <Stepper activeStep={done ? PHASES.length : activeStep} sx={{ mb: 3 }}>
         {PHASES.map((p) => (
@@ -128,9 +140,11 @@ export function ProgressScreen() {
       </AnimatedGradientBorder>
 
       {error && (
-        <Alert severity="error" sx={{ mt: 3 }}>
-          {error}
-        </Alert>
+        <FadeIn>
+          <Alert severity="error" sx={{ mt: 3 }}>
+            {error}
+          </Alert>
+        </FadeIn>
       )}
 
       <Grid container spacing={2} sx={{ mt: 3, mb: 3 }}>

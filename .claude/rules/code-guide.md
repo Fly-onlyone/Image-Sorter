@@ -70,14 +70,25 @@ hex** in components; derive from the active palette so all 11 themes work.
 overrides come from the SQLite `settings` table. Read config via `get_settings()` (lru-cached).
 
 ### Shared page primitives (`components/`)
-Screens compose from shared primitives, not bespoke layout. `PageContainer` + `PageHeader`
-(`PageContainer.tsx`) own page width — a **fluid** `maxWidth` that grows on wide windows (with
-`fill` for vertical stretch); **never hardcode a per-page `maxWidth` box**. `PageTransition`
-(`PageTransition.tsx`) animates view changes (mounted by `AppShell`). `StatTile` (`StatTile.tsx`)
-is the animated count-up tile. `Toast` + `useToast()` (`Toast.tsx`, `hooks/useToast.ts`) is the
-one themed snackbar — don't add ad-hoc `Snackbar`s. Reuse the `effects/` motion wrappers
-(`MagneticButton`, `ScrollReveal`, `AnimatedGradientBorder`); all motion gates on
-`usePrefersReducedMotion`.
+Screens compose from shared primitives, not bespoke layout. `PageContainer` (`PageContainer.tsx`)
+owns page width — fluid by default, or a number that caps + centers it (`mx:auto`); **never
+hardcode a per-page `maxWidth` box**; `fill` makes it a flex column for list pages. `PageBar`
+(same file) is the **sticky** title rail every screen renders instead of a big heading — a
+**collapsing large title** (icon chip + large title with the subtitle below) that shrinks/docks
+into a slim rail on scroll (`useScroll`/`useTransform`), closed by an animated gradient hairline;
+on run-flow views it also hosts the Setup→Process→Review→Commit `Stepper` at constant size (so
+`AppShell` no longer renders it). Keep the rail flat opaque — **no `backdrop-filter`** (it hid the
+fixed Toast in the WebView). `SettingRow` + `SettingsSection` (label/control row + titled glass-card
+group) and `CardRadioGroup` (selectable-card picker) compose Settings and New Run — **never set
+`height:"100%"` on a section card**; cards size to content (the stretch was the old empty-layout
+bug). `PageTransition` (`PageTransition.tsx`) crossfades view changes (opacity-only so the sticky
+`PageBar` isn't trapped by a transformed ancestor). `StatTile` (`StatTile.tsx`) is the count-up
+tile. `Toast` + `useToast()` (`Toast.tsx`, `hooks/useToast.ts`) is the one themed snackbar
+(**bottom-center, outlined**, no severity fill) — don't add ad-hoc `Snackbar`s. `FadeIn`
+(`effects/FadeIn.tsx`) eases dynamically-rendered alerts in (vs `ScrollReveal`, which is for long
+scrolling lists); wrap add/remove lists in `AnimatePresence` for exit animations. Reuse the
+`effects/` motion wrappers (`MagneticButton`, `ScrollReveal`, `AnimatedGradientBorder`); all motion
+gates on `usePrefersReducedMotion`.
 
 ### When NOT to add abstraction
 No DI containers, no ORM, no Redux. This is a single-user localhost app — direct functions +

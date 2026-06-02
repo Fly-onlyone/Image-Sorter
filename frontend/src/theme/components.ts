@@ -141,6 +141,25 @@ export function buildComponents(preset: ThemePreset, shadows: GlowShadows): Comp
       styleOverrides: {
         root: {
           borderRadius: glass.borderRadius,
+          // A subtle inset "well" + visible border so inputs read as inputs on the glass
+          // cards (a fill-less outline + faint label used to vanish into the card surface).
+          backgroundColor: withAlpha(colors.bg, 0.5),
+          // Typed text bright + an accent caret so entered paths are clearly visible.
+          color: colors.textPrimary,
+          caretColor: colors.primary,
+          "& input::placeholder, & textarea::placeholder": {
+            color: colors.textPrimary,
+            opacity: 0.6,
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: withAlpha(colors.textPrimary, 0.18),
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: withAlpha(colors.textPrimary, 0.32),
+          },
+          "&.Mui-focused": {
+            backgroundColor: withAlpha(colors.bg, 0.65),
+          },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: colors.primary,
             boxShadow: shadows.primary,

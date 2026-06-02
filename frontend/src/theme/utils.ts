@@ -21,6 +21,17 @@ export function withAlpha(hex: string, alpha: number): string {
   return `rgba(${hexToRgb(hex)}, ${alpha})`;
 }
 
+/** Blend two role hexes: mix("#4c566a", "#d8dee9", 0.45) moves 45% from a → b. */
+export function mix(a: string, b: string, t: number): string {
+  const [ar, ag, ab] = hexToRgb(a).split(", ").map(Number);
+  const [br, bg, bb] = hexToRgb(b).split(", ").map(Number);
+  const ch = (x: number, y: number) =>
+    Math.round(x + (y - x) * t)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`;
+}
+
 export function gradientAccent(primary: string, secondary: string): string {
   return `linear-gradient(90deg, ${primary}, ${secondary})`;
 }

@@ -41,13 +41,22 @@ export function SilkRibbons({ intensity = 1 }: SilkRibbonsProps) {
   const reduced = usePrefersReducedMotion();
   const { primary, secondary, info } = theme.app.colors;
 
+  // `reduced` is read through a ref so toggling reduce-motion does NOT re-run the setup effect
+  // (re-creating the canvas + ribbons mid-flip was the screen-flicker source). The loop simply
+  // stops rescheduling — the canvas freezes in place (no jump) — and a separate effect restarts
+  // it when motion is re-enabled.
+  const reducedRef = useRef(reduced);
+  reducedRef.current = reduced;
+  const rafRef = useRef(0);
+  const drawRef = useRef<(t: number) => void>(() => {});
+
+  // Setup + draw loop. Re-runs only when colors/intensity change, never on `reduced`.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let raf = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const palette = [primary, secondary, info];
 
@@ -88,8 +97,10 @@ export function SilkRibbons({ intensity = 1 }: SilkRibbonsProps) {
         ctx.fillStyle = grad;
         ctx.beginPath();
         const step = 24;
-        const phase = reduced ? r.phase : r.phase + t * r.speed;
-        const baseY = reduced ? r.y : r.y + Math.sin(t * DRIFT_SPEED + r.phase) * h * DRIFT_RATIO;
+        // Always time-based: when reduced flips on, the loop just stops rescheduling and the
+        // current frame stays put (freeze-in-place), rather than snapping to a base position.
+        const phase = r.phase + t * r.speed;
+        const baseY = r.y + Math.sin(t * DRIFT_SPEED + r.phase) * h * DRIFT_RATIO;
         for (let x = 0; x <= w + step; x += step) {
           const y = baseY + Math.sin(x / r.wavelength + phase) * r.amp;
           if (x === 0) ctx.moveTo(x, y);
@@ -103,15 +114,22 @@ export function SilkRibbons({ intensity = 1 }: SilkRibbonsProps) {
         ctx.fill();
       }
       ctx.globalCompositeOperation = "source-over";
-      if (!reduced) raf = requestAnimationFrame(draw);
+      if (!reducedRef.current) rafRef.current = requestAnimationFrame(draw);
     };
 
+    drawRef.current = draw;
     draw(0);
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
     };
-  }, [primary, secondary, info, intensity, reduced]);
+  }, [primary, secondary, info, intensity]);
+
+  // Start/stop the loop when reduce-motion toggles, without rebuilding the canvas.
+  useEffect(() => {
+    cancelAnimationFrame(rafRef.current);
+    if (!reduced) rafRef.current = requestAnimationFrame((t) => drawRef.current(t));
+  }, [reduced]);
 
   return (
     <canvas

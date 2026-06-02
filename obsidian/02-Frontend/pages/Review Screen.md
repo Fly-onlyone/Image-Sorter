@@ -29,7 +29,7 @@ The signature action is in tab 1: typing a name and clicking "Name & enroll" cal
 
 ## Gotchas
 
-- The thumbnail grid stays FLAT NEUTRAL (no glass/glow) so images read true; see [[App Shell]]'s dialled-down `RIBBON_INTENSITY`.
+- The thumbnail grid stays FLAT NEUTRAL (no glass/glow) so images read true. The [[Silk Ribbons]] background now runs at full intensity here too (the old `RIBBON_INTENSITY` dial-down made it invisible) — it stays subtle behind the grid because it's heavily blurred + low-alpha.
 - MUI v9 `Stack` needs `alignItems`/`justifyContent` via `sx`.
 
 ## See also

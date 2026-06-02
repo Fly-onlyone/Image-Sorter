@@ -1,8 +1,9 @@
-// Gradient-flow border for emphasis cards (ported from TradingAgent).
+// Gradient-flow border for emphasis cards (ported from TradingAgent). Reduced-motion gated.
 
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type { ReactNode } from "react";
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 
 export function AnimatedGradientBorder({
   children,
@@ -12,6 +13,7 @@ export function AnimatedGradientBorder({
   radius?: number;
 }) {
   const theme = useTheme();
+  const reduced = usePrefersReducedMotion();
   const r = radius ?? theme.app.glass.borderRadius;
   return (
     <Box
@@ -21,7 +23,7 @@ export function AnimatedGradientBorder({
         p: "1px",
         background: theme.app.gradientAccent,
         backgroundSize: "200% 100%",
-        animation: "gradientFlow 6s ease infinite",
+        ...(reduced ? {} : { animation: "gradientFlow 6s ease infinite" }),
       }}
     >
       <Box sx={{ borderRadius: `${r}px`, bgcolor: "background.paper", height: "100%" }}>

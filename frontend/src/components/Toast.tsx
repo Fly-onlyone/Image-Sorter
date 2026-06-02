@@ -1,8 +1,11 @@
-// Themed toast outlet: a bottom-right Snackbar + filled Alert (auto-themed by the
-// palette severity slot — no hardcoded hex). Replaces the old unstyled bottom-left
-// SnackbarContent box. Mount <ToastProvider> once, high in the tree.
+// Themed toast outlet: a bottom-CENTER Snackbar + outlined Alert (auto-themed by the
+// palette severity slot — no hardcoded hex). Outlined (no severity fill) over a SOLID
+// `background.paper` surface so it reads as a centered pill over the SilkRibbons — NO
+// backdrop-filter (a blur on a fixed/portaled element forms a compositing layer that
+// hid the toast in the WebView). Snappy auto-hide; each toast() replaces the prior state
+// so rapid saves reset rather than stack. Mount <ToastProvider> once, high in the tree.
 
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Portal, Snackbar } from "@mui/material";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { ToastContext, type ToastSeverity } from "../hooks/useToast";
 
@@ -29,19 +32,31 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <Snackbar
-        open={state.open}
-        autoHideDuration={2200}
-        onClose={(_, reason) => {
-          if (reason === "clickaway") return;
-          close();
-        }}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert variant="filled" severity={state.severity} onClose={close} sx={{ width: "100%" }}>
-          {state.message}
-        </Alert>
-      </Snackbar>
+      <Portal>
+        <Snackbar
+          open={state.open}
+          autoHideDuration={1600}
+          onClose={(_, reason) => {
+            if (reason === "clickaway") return;
+            close();
+          }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            variant="outlined"
+            severity={state.severity}
+            onClose={close}
+            sx={{
+              backgroundColor: "background.paper",
+              backgroundImage: "none",
+              boxShadow: 8,
+              borderRadius: 2,
+            }}
+          >
+            {state.message}
+          </Alert>
+        </Snackbar>
+      </Portal>
     </ToastContext.Provider>
   );
 }

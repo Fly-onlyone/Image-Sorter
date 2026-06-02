@@ -68,6 +68,7 @@ everything runs offline (`HF_HUB_OFFLINE=1`).
 | `frontend/src/pages/` | the 7 app screens (Setup → Progress → Review → Commit, Gallery, History, Settings) |
 | `frontend/src/api/`, `store/`, `hooks/`, `utils/` | client, app state, hooks, platform helpers |
 | `frontend/src/theme/` | typed 11-theme registry (default Dracula) |
+| `frontend/src/components/` | shared chrome — `PageBar` (sticky collapsing-title rail), `PageContainer`, `SettingRow`/`SettingsSection`/`CardRadioGroup`, `StatTile`, `Toast` (bottom-center, outlined) |
 | `frontend/src/components/effects/` | `SilkRibbons` (signature background) + ported polish helpers |
 | `frontend/src-tauri/` | Rust shell — sidecar lifecycle + port handshake |
 | `product/sidecar.spec` | PyInstaller packaging for the sidecar |

@@ -16,7 +16,7 @@ tags: [frontend, components]
 
 The canvas sits over a separate layered backdrop — a diagonal `body` gradient + two soft accent glows painted in [[Component Overrides]] (`MuiCssBaseline`) — so the background reads rich and deep but still dark.
 
-An `intensity` prop scales gradient alpha and canvas opacity; [[App Shell]] passes `0.12` on image-heavy screens. When [[usePrefersReducedMotion]] returns true the animation loop never requests another frame — it draws one frozen still ([[Reduced-Motion Gating Pattern]]).
+An `intensity` prop scales gradient alpha and canvas opacity (compounding, so low values vanish fast); [[App Shell]] now mounts it at the default **full intensity on every screen** (the old per-view `0.12` dial-down on Review/Gallery made the effect invisible there). When [[usePrefersReducedMotion]] returns true the loop stops rescheduling and the canvas **freezes in place** ([[Reduced-Motion Gating Pattern]]); `reduced` is read via a ref so toggling it doesn't tear down / re-init the canvas (a flicker source), and a small separate effect restarts the loop when motion is re-enabled.
 
 ## Depends on
 
@@ -26,7 +26,7 @@ An `intensity` prop scales gradient alpha and canvas opacity; [[App Shell]] pass
 
 ## Used by
 
-- [[App Shell]] — mounted behind all content with per-view intensity
+- [[App Shell]] — mounted behind all content at full intensity on every screen
 
 ## See also
 

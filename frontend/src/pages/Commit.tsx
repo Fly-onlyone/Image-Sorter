@@ -17,9 +17,10 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { api, type PreviewResult } from "../api/client";
+import { FadeIn } from "../components/effects/FadeIn";
 import { MagneticButton } from "../components/effects/MagneticButton";
 import { ScrollReveal } from "../components/effects/ScrollReveal";
-import { PageContainer, PageHeader } from "../components/PageContainer";
+import { PageBar, PageContainer } from "../components/PageContainer";
 import { StatTile } from "../components/StatTile";
 import { useAppState } from "../store/AppState";
 import { openPath } from "../utils/platform";
@@ -59,14 +60,16 @@ export function CommitScreen() {
 
   return (
     <PageContainer>
-      <PageHeader
+      <PageBar
         title="Commit & Summary"
         subtitle="Review the proposed structure — nothing is written until you confirm"
       />
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
+        <FadeIn>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        </FadeIn>
       )}
 
       {!preview && !error && (
@@ -95,9 +98,11 @@ export function CommitScreen() {
             <Chip variant="outlined" label={`${preview.tree.length} folders`} />
           </Stack>
 
-          <Alert severity="info" sx={{ mb: 2 }}>
-            Proposed structure below. Nothing is written until you confirm.
-          </Alert>
+          <FadeIn>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Proposed structure below. Nothing is written until you confirm.
+            </Alert>
+          </FadeIn>
 
           <Grid container spacing={1.5}>
             {preview.tree.map((folder, i) => (
@@ -153,9 +158,11 @@ export function CommitScreen() {
               Done
             </Typography>
             <Grid container spacing={2} sx={{ mb: 2 }}>
-              {Object.entries(committed).map(([k, v]) => (
+              {Object.entries(committed).map(([k, v], i) => (
                 <Grid size={{ xs: 6, sm: 4, md: 3 }} key={k}>
-                  <StatTile label={k} value={v} />
+                  <ScrollReveal delay={i * 0.05}>
+                    <StatTile label={k} value={v} />
+                  </ScrollReveal>
                 </Grid>
               ))}
             </Grid>

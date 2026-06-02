@@ -106,13 +106,26 @@ produces an MUI theme plus a `theme.app` token bag (glass/shadows/spring/animati
 components and framer-motion read. App states map onto MUI palette slots — nude=`error`,
 review=`warning`, identified=`success` — so every theme "just works". Glass + glow apply to
 chrome only; the thumbnail grid stays flat neutral. `SilkRibbons` (signature animated background,
-dialled down on image-heavy screens) layers over a theme-derived `body` gradient + accent glow.
+full intensity on every screen) layers over a theme-derived `body` gradient + accent glow.
 
-**Shared frontend primitives (`frontend/src/components/`):** `PageContainer`/`PageHeader` give
-every screen a fluid responsive width + cinematic gradient header — **never hardcode a per-page
-`maxWidth`**; `PageTransition` animates view changes; `StatTile` is the animated count-up tile;
-`Toast` + `useToast()` is the themed app-wide snackbar. All motion gates on
-`usePrefersReducedMotion`.
+**Shared frontend primitives (`frontend/src/components/`):** `PageContainer` owns page width —
+**never hardcode a per-page `maxWidth`** (fluid by default; a number caps + centers it).
+`PageBar` is the **sticky** title rail every screen renders instead of a big heading: a
+**collapsing large title** (icon chip + large title with the subtitle below it) that, as the
+window scrolls, shrinks and docks into a slim rail (`useScroll`/`useTransform`, threshold
+`COLLAPSE_PX`), closed by a 1px animated gradient hairline. On run-flow views it also carries
+the Setup→Process→Review→Commit `Stepper` at constant size (so `AppShell` no longer renders it).
+Keep the rail a flat opaque band — **no `backdrop-filter`** there (a blur formed a compositing
+layer that hid the fixed Toast in the WebView). `SettingRow` + `SettingsSection` (label/control
+row + titled glass-card group) and `CardRadioGroup` (selectable-card picker) compose Settings and
+New Run — **never put `height:"100%"` on a section card** (stretching a 1-control card to a tall
+neighbour was the old source of empty layouts). `PageTransition` crossfades view changes
+(opacity-only so the sticky `PageBar` isn't trapped by a transformed ancestor); `StatTile` is the
+animated count-up tile; `Toast` + `useToast()` is the themed app-wide snackbar (**bottom-center,
+outlined** over a solid `background.paper` surface — no severity fill, and **no `backdrop-filter`**
+which hid it in the WebView). `FadeIn` eases dynamically-appearing
+alerts in; lists that add/remove items wrap in `AnimatePresence` for exit animations. All motion
+gates on `usePrefersReducedMotion`.
 
 ## Gotchas
 
