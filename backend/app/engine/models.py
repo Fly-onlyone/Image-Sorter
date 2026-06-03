@@ -201,8 +201,9 @@ def anime_real_score(path: str) -> float:
     _force_offline()
     from imgutils.validate import anime_real_score as _real
 
-    label, score = _real(path)
-    return float(score) if label == "anime" else float(1.0 - score)
+    # Installed imgutils returns {type: score} (e.g. {"anime": .., "real": ..}),
+    # not a (label, score) tuple — take P(anime) directly.
+    return float(_real(path).get("anime", 0.0))
 
 
 def anime_classify_scores(path: str) -> dict[str, float]:
