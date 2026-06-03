@@ -46,9 +46,17 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Image Sorter Sidecar", version="0.1.0", lifespan=lifespan)
+# Localhost-only sidecar, but restrict CORS to the Tauri WebView origins
+# (``tauri://localhost`` on macOS/Linux, ``http://tauri.localhost`` on Windows) plus the
+# dev server / loopback — so an arbitrary web page in the user's browser can't drive the
+# sidecar even if it guesses the port. Browser dev reaches it through the Vite ``/api``
+# proxy (server-side), so it's unaffected by this gate.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # localhost-only sidecar; WebView origin varies
+    allow_origin_regex=(
+        r"^(tauri://localhost|https?://tauri\.localhost"
+        r"|http://localhost(:\d+)?|http://127\.0\.0\.1(:\d+)?)$"
+    ),
     allow_methods=["*"],
     allow_headers=["*"],
 )
