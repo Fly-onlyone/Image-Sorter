@@ -63,7 +63,11 @@ with the type inside the JSON, so the frontend uses a single `EventSource.onmess
 A `ThemePreset` (12 color roles + glass/spring/animation tokens) → `buildTheme()` → an MUI
 theme plus a `theme.app` token bag read by components and framer-motion. App states map onto
 MUI palette slots (`nude→error`, `review→warning`, `identified→success`) — **never hardcode
-hex** in components; derive from the active palette so all 11 themes work.
+hex** in components; derive from the active palette so all 11 themes work. `buildTheme` first
+normalizes the preset's colors once (`theme/normalize.ts`, knobs in `theme/standards.ts`):
+every theme is leveled to one background darkness (`STANDARD_BG_LIGHTNESS`) and a WCAG text-
+contrast floor, while accents pass through. Add/adjust the standard there — **don't** re-tune
+darkness or text contrast per preset.
 
 ### Config layering (`config.py`)
 `Settings` (pydantic-settings, env prefix `IMGSORT_`) provides defaults; persisted user

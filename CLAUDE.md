@@ -103,7 +103,15 @@ vars); user changes are persisted in the SQLite `settings` table and applied on 
 **Theme system (`frontend/src/theme/`):** 11 typed `ThemePreset`s in `presets.ts` (default
 Dracula; a preset may pass a `glass` override — Dracula uses a glossier one) → `buildTheme()`
 produces an MUI theme plus a `theme.app` token bag (glass/shadows/spring/animations) that
-components and framer-motion read. App states map onto MUI palette slots — nude=`error`,
+components and framer-motion read. `buildTheme` first runs every preset through
+`normalizeColors()` (`theme/normalize.ts`) so all themes share two central standards from
+`theme/standards.ts`: one **background darkness** (each `bg` re-leveled to the `STANDARD_BG_LIGHTNESS` HSL target
+— the single tunable darkness constant in `standards.ts` — with `surface`/`elevated`
+shifted by the same delta) and a **text-contrast floor** (text
+auto-lightened until it clears WCAG ≈7:1 primary / 4.5:1 secondary against the lightest surface).
+Authored preset hexes therefore fix each theme's hue/identity; the standard governs darkness +
+readability. Accents pass through untouched, so `palette.ts` maps text straight through (the old
+45% secondary-text mix is gone). App states map onto MUI palette slots — nude=`error`,
 review=`warning`, identified=`success` — so every theme "just works". Glass + glow apply to
 chrome only; the thumbnail grid stays flat neutral. `SilkRibbons` (signature animated background,
 full intensity on every screen) layers over a theme-derived `body` gradient + accent glow.

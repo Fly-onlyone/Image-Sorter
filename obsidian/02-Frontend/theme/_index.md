@@ -18,6 +18,7 @@ tags: [moc, frontend]
 ## Factory & builders
 
 - [[Theme Factory]] — `buildTheme(preset)` → MUI theme + `theme.app` (`index.ts`)
+- [[Color Normalization]] — levels darkness + text contrast per preset (`normalize.ts`, `standards.ts`)
 - [[Palette Builder]] — maps color roles onto MUI semantic slots (`palette.ts`)
 - [[Component Overrides]] — MUI component overrides; glass on chrome only (`components.ts`)
 - [[Glow Shadows]] — primary-derived glow shadow set (`shadows.ts`)
@@ -26,7 +27,7 @@ tags: [moc, frontend]
 
 - [[Design Tokens]] — shared glass/spring/animation defaults (`tokens.ts`)
 - [[Typography]] — self-hosted Outfit + Inter (`typography.ts`)
-- [[Color Utilities]] — `hexToRgb`, `withAlpha`, `gradientAccent` (`utils.ts`)
+- [[Color Utilities]] — hex/HSL/WCAG color math (`utils.ts`)
 
 ## See also
 

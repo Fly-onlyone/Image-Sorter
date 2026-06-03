@@ -16,6 +16,8 @@ tags: [frontend, theme]
 
 `DEFAULT_THEME_ID` is `"dracula"`, the first-launch default. `PRESET_MAP` indexes presets by `id`, and `getPreset(id)` returns the matching preset or falls back to Dracula when `id` is null, undefined, or unknown. The `preset()` helper takes an optional `glass` override merged onto `DEFAULT_GLASS` — Dracula passes a glossier one (`cardOpacity 0.58`, `cardBlur 20`, `borderRadius 14`); the other ten share the defaults.
 
+The authored `bg`/`surface`/`elevated` and text hexes are the theme's *intent*, not the final rendered values: [[Color Normalization]] re-levels their lightness (and floors text contrast) at build time, so what you author here mainly fixes each theme's **hue/identity** while the shared standard governs darkness and readability.
+
 ## Depends on
 
 - [[Theme Types]] — supplies the `ColorRoles` / `ThemePreset` shapes

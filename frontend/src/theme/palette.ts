@@ -3,7 +3,6 @@
 
 import type { PaletteOptions } from "@mui/material/styles";
 import type { ColorRoles } from "./types";
-import { mix } from "./utils";
 
 export function buildPalette(c: ColorRoles): PaletteOptions {
   return {
@@ -15,9 +14,9 @@ export function buildPalette(c: ColorRoles): PaletteOptions {
     error: { main: c.error }, //   nude / R-18
     info: { main: c.info },
     background: { default: c.bg, paper: c.surface },
-    // Lift secondary text 45% toward primary so it stays readable on every theme —
-    // several presets' raw textSecondary (e.g. Nord #4c566a) was near-invisible.
-    text: { primary: c.textPrimary, secondary: mix(c.textSecondary, c.textPrimary, 0.45) },
+    // Both text roles already meet a WCAG contrast floor (>=7:1 / >=4.5:1) against the
+    // lightest surface — enforced in normalizeColors — so they stay readable on every theme.
+    text: { primary: c.textPrimary, secondary: c.textSecondary },
     divider: c.border,
   };
 }

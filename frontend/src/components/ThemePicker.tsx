@@ -60,6 +60,8 @@ export function ThemePicker() {
               secondary={p.hue}
               slotProps={{ secondary: { sx: { fontSize: 11 } } }}
             />
+            {/* Accent roles only — these pass through normalizeColors unchanged, so
+                the swatches always match the rendered theme. */}
             <Swatches
               colors={[p.colors.primary, p.colors.secondary, p.colors.success, p.colors.error]}
             />
