@@ -26,6 +26,12 @@ parses it and serves it through the `sidecar_url` command; `api/client.ts` resol
 URL as `window.__SIDECAR_URL__` → `invoke('sidecar_url')` → `/api` Vite proxy (dev) →
 `127.0.0.1:8770` (fallback).
 
+The sidecar binds loopback only, and CORS (`server.py`) is locked to the Tauri WebView origins
+(`tauri://localhost`, `http://tauri.localhost`) plus dev/loopback via `allow_origin_regex` — not
+`*` — so an arbitrary local web page can't drive it even if it guesses the port. Browser dev is
+unaffected (requests go through the Vite `/api` proxy server-side, not browser CORS).
+`tests/test_cors.py` guards the allowlist.
+
 ## Data Flow — the per-run pipeline
 
 Everything is keyed by the image's **SHA-256 content hash** (idempotency + cross-run cache).

@@ -59,7 +59,10 @@ it to the WebView via the `sidecar_url` command. The frontend never hardcodes a 
 → `invoke('sidecar_url')` (Tauri) → the `/api` Vite proxy (dev) → `127.0.0.1:8770` (fallback).
 The sidecar binds an OS-assigned free port (`backend/app/__main__.py`, picked via a probe
 socket — never the `fd=` handoff, which breaks on Windows) to avoid colliding with the author's
-other apps. The shell kills the sidecar on exit.
+other apps. The shell kills the sidecar on exit. CORS is restricted (`server.py`) to the Tauri
+WebView origins (`tauri://localhost`, `http://tauri.localhost`) + dev/loopback via an
+`allow_origin_regex` — not `*` — so a stray browser page can't reach the sidecar; browser dev is
+unaffected (it goes through the Vite `/api` proxy, server-side). See `tests/test_cors.py`.
 
 **Sidecar in dev and release:** both `tauri dev` and `tauri build` spawn the bundled
 PyInstaller exe (the Rust shell owns its lifecycle). So `tauri dev` is a single self-contained
