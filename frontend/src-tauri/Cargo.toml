@@ -1,6 +1,6 @@
 [package]
 name = "image-sorter"
-version = "0.1.0"
+version = "0.2.0"
 description = "Image Sorter — anime/gacha character categoriser"
 authors = ["flytheonlyone"]
 edition = "2021"
